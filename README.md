@@ -64,6 +64,9 @@ mdb list
 
 # search for content
 mdb list | xargs rg $(read)
+
+# example bulk add files to db
+find ~ -name 'README.md' -path '*/github.com/*' -not -path '*/node_modules/*' | xargs -I {} mdb add -- "{}"
 ```
 
 ## Contributing
