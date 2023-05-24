@@ -26,16 +26,9 @@ content = """
 
 ## Installation
 
-```bash
-```
-
 ## Usage
 
-```bash
-```
-
 ## Contributing
-
 
 ## License
 
