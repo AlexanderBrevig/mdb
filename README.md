@@ -36,6 +36,13 @@ content = """
 """
 ```
 
+Create `~/.config/mdb/default.md` for the default template to run OK.
+
+```bash
+mkdir -p ~/.config/mdb
+printf '# $NAME\n\n' > ~/.config/mdb/default.md
+```
+
 Then run 
 
 ```bash
@@ -45,11 +52,12 @@ mdb
 # open or create a README.md in your $PWD
 mdb readme
 
-# create/overwrite a new TESTS.md based on the `readme` template in you $PWD
-mdb new -t readme TESTS
+# create/overwrite a new TEMP_FILE_MDB.md based on the `readme` template in you $PWD
+mdb new -t readme TEMP_FILE_MDB
 
 # add an existing file to the mdb
-mdb add CONTRIBUTORS.md
+# this will add the default created by `mdb` above
+mdb add $(date -u +%Y-%m-%d|tr -d '\n').md
 
 # list files opened with mdb
 mdb list
