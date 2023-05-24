@@ -67,6 +67,9 @@ mdb list | xargs rg $(read)
 
 # example bulk add files to db
 find ~ -name 'README.md' -path '*/github.com/*' -not -path '*/node_modules/*' | xargs -I {} mdb add -- "{}"
+
+# after a while, the db might have files that are no longer present so clean it up
+mdb clean
 ```
 
 ## Contributing
