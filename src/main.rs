@@ -2,27 +2,25 @@ mod brain;
 mod config;
 mod log;
 
-use crate::config::config::{Action, Data, Named, Template};
-use crate::log::log::init_log;
+use crate::config::{Action, Data, Named, Template};
+use crate::log::init_log;
 use ::log::{info, LevelFilter};
 use clap::{arg, command, ArgAction, Command};
 use core::panic;
 use std::error::Error;
 use std::fs::{self, File};
 use std::io::prelude::*;
-use toml;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let cli_result = init_cli();
-    let log_filter: LevelFilter;
-    match cli_result
+    let log_filter = match cli_result
         .get_one::<u8>("debug")
         .expect("Count's are defaulted")
     {
-        1 => log_filter = LevelFilter::Warn,
-        2 => log_filter = LevelFilter::Info,
-        _ => log_filter = LevelFilter::Error,
-    }
+        1 => LevelFilter::Warn,
+        2 => LevelFilter::Info,
+        _ => LevelFilter::Error,
+    };
     init_log(log_filter).expect("Logging must be successfully initialized");
 
     // Initialize config directory and prepare config file
@@ -53,13 +51,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     parse_template_arg(&cli_result, &mut template)?;
     parse_name_arg(&data, &cli_result, &mut template, &mut name);
     if let Some(matches) = cli_result.subcommand_matches("new") {
-        parse_template_arg(&matches, &mut template)?;
-        parse_name_arg(&data, &matches, &mut template, &mut name);
+        parse_template_arg(matches, &mut template)?;
+        parse_name_arg(&data, matches, &mut template, &mut name);
         action = Action::New(Named::from_template_and_name(template, name));
     } else if let Some(matches) = cli_result.subcommand_matches("add") {
-        parse_name_arg(&data, &matches, &mut template, &mut name);
+        parse_name_arg(&data, matches, &mut template, &mut name);
         action = Action::Add(Named::from_template_and_name(template, name));
-    } else if let Some(_) = cli_result.subcommand_matches("list") {
+    } else if cli_result.subcommand_matches("list").is_some() {
         action = Action::List;
     } else {
         action = Action::Default(Named::from_template_and_name(template, name));
@@ -71,14 +69,14 @@ fn main() -> Result<(), Box<dyn Error>> {
     match Action::act(&data, action) {
         Ok(ok) => {
             info!("{:?}", ok);
-            return Ok(());
+            Ok(())
         }
-        Err(e) => return Err(e.into()),
+        Err(e) => Err(e),
     }
 }
 
 fn init_cli() -> clap::ArgMatches {
-    let matches = command!() // requires `cargo` feature
+    command!() // requires `cargo` feature
         .arg(arg!(
             -d --debug ... "Turn debugging information on"
         ))
@@ -98,8 +96,7 @@ fn init_cli() -> clap::ArgMatches {
         // .subcommand(Command::new("search").about("Add an existing file to notes"))
         .arg(arg!([name] "Note to operate on, or create if only arg given"))
         .arg(arg!(-t --template "select a template").action(ArgAction::Set))
-        .get_matches();
-    matches
+        .get_matches()
 }
 
 fn parse_name_arg(
