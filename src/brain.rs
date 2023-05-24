@@ -86,4 +86,21 @@ impl Brain {
         println!("{}", list);
         Ok(list)
     }
+
+    pub(crate) fn clean(data: &Data) -> Result<String, Box<dyn Error>> {
+        info!("Brain::clean");
+        let brain = Brain::load(data)?;
+        let removals = &brain
+            .entries
+            .iter()
+            .filter(|fil| !fil.exists())
+            .collect::<Vec<&PathBuf>>();
+        let mut brain = Brain::load(data)?;
+        info!("Brain::clean removals: {:?}", removals);
+        for removal in removals {
+            brain.entries.remove(removal.to_owned());
+        }
+        Brain::save(data, &brain)?;
+        Ok(removals.len().to_string())
+    }
 }

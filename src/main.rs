@@ -59,6 +59,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         action = Action::Add(Named::from_template_and_name(template, name));
     } else if cli_result.subcommand_matches("list").is_some() {
         action = Action::List;
+    } else if cli_result.subcommand_matches("clean").is_some() {
+        action = Action::Clean;
     } else {
         action = Action::Default(Named::from_template_and_name(template, name));
     }
@@ -93,6 +95,7 @@ fn init_cli() -> clap::ArgMatches {
         )
         .subcommand(Command::new("templates").about("List existing templates"))
         .subcommand(Command::new("list").about("List all known notes"))
+        .subcommand(Command::new("clean").about("Remove nonexistent entries from `list`"))
         // .subcommand(Command::new("search").about("Add an existing file to notes"))
         .arg(arg!([name] "Note to operate on, or create if only arg given"))
         .arg(arg!(-t --template "select a template").action(ArgAction::Set))
