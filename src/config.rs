@@ -69,6 +69,7 @@ pub enum Action {
     Add(Named),
     // Scan(PathBuf),
     List,
+    Clean,
 }
 
 impl Named {
@@ -217,6 +218,7 @@ impl Action {
                 }
             }
             Action::List => Brain::list(data),
+            Action::Clean => Brain::clean(data),
         };
     }
 
