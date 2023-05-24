@@ -1,0 +1,43 @@
+[config]
+data = "~/.mdb/db.toml"
+
+[[templates]]
+id = "default"
+name.exec = { run = "bash", args = ["-c", "date -u +%Y-%m-%d|tr -d '\n'"] }
+
+[[templates]]
+id = "readme"
+name.text = "README"
+content = """
+# $NAME
+
+## Installation
+
+```bash
+
+```
+
+## Usage
+
+```bash
+
+```
+
+## Contributing
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+"""
+
+
+[[templates]]
+id = "zk"
+dir = "~/notes"
+name.exec = { run = "bash", args = ["-c", "date -u +%Y-%m-%d|tr -d '\n'"] }
+content = """
+# $NAME
+
+
+"""
